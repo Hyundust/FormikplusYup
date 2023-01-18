@@ -2,24 +2,7 @@ import { useFormik } from "formik";
 import React from "react";
 import * as Yup from 'yup';
 
-const validate = values => {
-    const errors = {};
 
-
-    if(!values.name){
-        errors.name = 'Required Field!';
-    }else if (!values.name.length>3){
-        errors.name = 'Min. 3 characters!';
-    }
-
-    if(!values.email){
-        errors.email = 'Required Field!';
-    }else if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)){
-        errors.email = 'Wrong email adress!';
-    }
-    return errors;
-    
-}
 
 
 
@@ -34,7 +17,25 @@ const Form = () => {
             text:"",
             terms: false
         },
-        validate,
+        validationSchema:Yup.object({
+            name:Yup.string()
+                .min(3,"Atleast 3 characters!")
+                .required("Required field!"),
+            email:Yup.string()
+                .email("Must be a valid email address!")
+                .required("Required field!"),
+            amount:Yup.number()
+                .min(5,"Minimum 5")
+                .required("Required field!"),
+            currency: Yup.string()
+                .required("You must select a currency"),
+            terms: Yup.boolean()
+                .oneOf([true],"You need to agree "),
+            text: Yup.string()
+                .max(200,"Max 200 characters.")
+
+
+        }),
         onSubmit: values => console.log(JSON.stringify(values,null,2))
     })
     return (
@@ -49,7 +50,7 @@ const Form = () => {
                 onChange = {formik.handleChange}
                 onBlur = {formik.handleBlur}/>
 
-            {formik.errors.name&&formik.touched.name ?<div>{formik.errors.name}</div>:null}
+            {formik.errors.name&&formik.touched.name ?<div class="errorDiv">{formik.errors.name}</div>:null}
 
             <label htmlFor="email">Your email</label>
             <input 
@@ -60,15 +61,9 @@ const Form = () => {
                     onChange = {formik.handleChange}
                     onBlur = {formik.handleBlur}/>
 
-            {formik.errors.email&&formik.touched.email?<div>{formik.errors.email}</div>:null}
+            {formik.errors.email&&formik.touched.email?<div class="errorDiv" >{formik.errors.email}</div>:null}
             
-            <label htmlFor="amount">Amount</label>
-            <input id="amount" name="amount"
-                type="number"
-                value={formik.values.amount}
-                onChange = {formik.handleChange}
-                onBlur = {formik.handleBlur}
-            />
+            
             <label htmlFor="currency">Currency</label>
             <select
                 id="currency"
@@ -83,6 +78,7 @@ const Form = () => {
                     <option value="UAH">UAH</option>
                     <option value="CAD">CAD</option>
             </select>
+            {formik.errors.currency&&formik.touched.currency ?<div class="errorDiv">{formik.errors.currency}</div>:null}
             <label htmlFor="text">Notes</label>
             <textarea 
                 id="text"
@@ -91,7 +87,7 @@ const Form = () => {
                 onChange = {formik.handleChange}
                 onBlur = {formik.handleBlur}/>
 
-            {formik.errors.email?<div>{formik.errors.email}</div>:null}
+            {formik.errors.text&&formik.touched.text?<div class="errorDiv">{formik.errors.text}</div>:null}
             
             <label htmlFor="amount">Amount</label>
             <input id="amount" name="amount"
@@ -100,6 +96,7 @@ const Form = () => {
                 onChange = {formik.handleChange}
                 onBlur = {formik.handleBlur}
             />
+            {formik.errors.amount&&formik.touched.amount?<div class="errorDiv">{formik.errors.amount}</div>:null}
             <label className="checkbox">
                 <input 
                 name="terms"
@@ -110,6 +107,7 @@ const Form = () => {
                 />
                 Are you agreed with our rules?
             </label>
+            {formik.errors.terms&&formik.touched.terms?<div class="errorDiv">{formik.errors.terms}</div>:null}
             <button type="submit">Send</button>
         </form>
     )
