@@ -1,10 +1,11 @@
 import './app.scss';
-import Form from './Form';
+import Table from './Form';
+
 
 function App() {
   return (
     <div className="app">
-        <Form/>
+        <Table/>
     </div>
   );
 }
